@@ -47,7 +47,7 @@ The functions associated with the management of the editorial workflow are still
 
 If not a real editoral workflow management, the Python script introduces a barebone editorial signalling, sending an email to the author and editor whenever a new post is drafted, published, updated or for some reasons reverted to draft state afterwards.   
 
-## No co-authoring
+## Still no co-authoring, though
 
 Where both Ghost and this script fall short is in allowing for multi-author posts, such that co-authors can appear in the post byline and the like. For the time being, if there are more than author, we will have to list the co-authors manually at the beginning of the article.
 
