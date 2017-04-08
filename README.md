@@ -58,11 +58,11 @@ The auxiliary SQLite database named GGlink.db in this solution has the following
 Table: hashes
 
 Fields: 
-    hid (INTEGER)
-    hslug (TEXT)
-    hash (TEXT)
-    status (TEXT)
+    * hid (INTEGER)
+    * hslug (TEXT)
+    * hash (TEXT)
+    * status (TEXT)
     
-A handy tool to edit SQLite database is a graphical environment is http://sqlitebrowser.org
+A handy tool to edit SQLite database in a graphical environment is http://sqlitebrowser.org
 
 
