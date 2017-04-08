@@ -1,6 +1,6 @@
 # Ghost2Git — Version control and editorial workflow management for multi-author blogs in Ghost, sort of
 
-Ghost offer a great platform for blogging. It's nimble and neat, a welcome break from WordPress especially if what you want to do is focus on blogging and content and you do not need a general purpose CMS. 
+Ghost offers a great platform for blogging. It's nimble and neat, a welcome break from WordPress especially if what you want to do is focus on blogging and content and you do not need a general purpose CMS. 
 
 Ghost does blogging very well, but it does not do everything. And that's a good thing. For example, Ghost does not do comments—arguably a very important component of a blog—but this function is outsourced to external specialised services like Disqus that can easily be integrated with Ghost. 
 
