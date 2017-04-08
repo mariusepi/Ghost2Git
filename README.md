@@ -51,3 +51,19 @@ If not a real editoral workflow management, the Python script introduces a bareb
 ## No co-authoring
 
 Where both Ghost and this script fall short is in allowing for multi-author posts, such that co-authors can appear in the post byline and the like. For the time being, if there are more than author, we will have to list the co-authors manually at the beginning of the article.
+
+## Auxiliary database 
+
+The auxiliary SQLite database named GGlink.db in this solution has the following structure:
+
+Table: hashes
+
+Fields: 
+    hid (INTEGER)
+    hslug (TEXT)
+    hash (TEXT)
+    status (TEXT)
+    
+A handy tool to edit SQLite database is a graphical environment is http://sqlitebrowser.org
+
+
