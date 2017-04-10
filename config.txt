@@ -1,7 +1,0 @@
-[smtp]
-server = 'SMTP SERVER WITH PORT'
-from_addr = 'ENTER FROM ADDRESS HERE'
-
-[credentials]
-username = 'SMTP USERNAME'
-password = 'SMTP PASSWORD'
