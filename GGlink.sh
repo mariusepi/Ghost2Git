@@ -9,7 +9,7 @@
 # This script is run hourly as a cronjob for user ghost
 ##################################################################################
 ### Read configuration parameters ###
-cd
+cd $HOME/Downloads
 source GGprivate/GGconfig.txt
 
 ghostdbpath=$rootdir/$blogslug"/content/data"

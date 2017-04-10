@@ -45,7 +45,9 @@ dbghost_filename = "%s/GGprivate/ghost-backup.db" % (rootdir)
 dbhash_filename = "%s/GGprivate/GGlink.db" % (rootdir)
 gitreponame = "%s/%s" % (rootdir,gitreponame)
 
-print gitreponame
+#print gitreponame
+
+finaldraft = "==Final Draft=="
 
 #----------------------------------------------------------------------
 # Function for sending emails from Python through a SMTP server
@@ -139,8 +141,8 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                     subject = "New draft on %s" % (blogtitle)
                     body_text = """
  The new draft post <<%s>> has been added on %s
- Edit it after login at %s/ghost/signin
-                    """ % (title,blogtitle,blogurl)
+ Edit it after login at %s/ghost/editor/%i
+                    """ % (title,blogtitle,blogurl,id)
                     if emailswitch == "ON": send_email(subject, body_text, emails)
                 gitmodfile = "%s.md" % (slug)
                 print git.add(gitmodfile)
@@ -177,11 +179,11 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                             gdbcursor.execute(sqlquery)
                             for row in gdbcursor.fetchall():
                                 email, name = row
-                                emails = [ email, systemail ]
+                                emails = [ email, sysemail ]
                                 body_text = """
  The post <<%s>> has been reverted to draft on %s
- Edit it after login at %s/ghost/signin
-                                """ % (title,blogtitle,blogurl)
+ Edit it after login at %s/ghost/editor/%i
+                                """ % (title,blogtitle,blogurl,id)
                                 if emailswitch == "ON": send_email(subject, body_text, emails)        
                     else:
                         print "Changes detected in %s" % (title)
@@ -194,8 +196,21 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                         file.close()
                         gitmodfile = "%s.md" % (slug)
                         print git.add(gitmodfile)
-                        commit_message = "Updated post: %s" % (title)
+                        commit_message = '\"Updated post: %s\"' % (title)
                         print git.commit(m=commit_message)
+                        if finaldraft in markdown:
+                            subject = "Draft post has been submitted for review"
+                            sqlquery = "select email, name from users where id = %i" % (author_id)
+                            gdbcursor.execute(sqlquery)
+                            for row in gdbcursor.fetchall():
+                                email, name = row
+                                emails = [ email, sysemail ]
+                                #print emails
+                                body_text = """
+ %s, author of the draft post <<%s>>, has submitted it for review on %s.
+ The editors can review it at %s/ghost/editor/%i
+                                """ % (name,title,blogtitle,blogurl,id)
+                                if emailswitch == "ON": send_email(subject, body_text, emails)                          
                     
         hashdb.close()    
 
