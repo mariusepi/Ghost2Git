@@ -8,8 +8,9 @@
 #         ideally cloning a remote repository on a service like GitHub or GitLab
 # This script is run hourly as a cronjob for user ghost
 ##################################################################################
-### Read configuration parapters ###
-source ../GGprivate/GGconfig.txt
+### Read configuration parameters ###
+cd
+source GGprivate/GGconfig.txt
 
 ghostdbpath=$rootdir/$blogslug"/content/data"
 
