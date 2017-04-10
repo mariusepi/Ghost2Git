@@ -6,6 +6,10 @@ Ghost does blogging very well, but it does not do everything. And that's a good 
 
 Another function that Ghost does not offer is version control for posts. And for multi-author blogs, it does not provide editorial flow management tools. Again, I think that it is a good thing that Ghost focuses on what it does best. And if you really need these functions, perhaps it is better to develop them outside Ghost. And this project is about offering a first tentative solution to this problem. 
 
+## TL;DR 
+
+If you prefer to skip the discussion about why revision control in Ghost might be useful and how to implement it, please check the INSTALL file
+
 ## Why did I neeed version control and editorial workflow management in Ghost?
 
 I am the co-editor and administrator of a multi-author blog https://security-praxis.eu While authorship is individual (or shared with co-authors), posts are read and commented about by fellow authors and the editors before publication. When we started the blog three years ago and we had to make technical choices, we looked for a blogging platform that at the same time offered some editorial workflow management tools and that at the same time could accommodate the eventual growth of the blog into a full-fledged peer reviewd scientific journal. This overlapping requirement had lead us to opt for a technical solution based on  [Annotum](https://annotum.org), a WordPress theme that allowed for relatively sophisticated editorial workflow management, while complying with the JATS standards for online scientific publications. Plus WP's user friendliness and it's vast ecosystem of plugins. Three years later the blog-journal superposition of states has eventually resolved and Security Praxis is going to be a beautiful blog, perhaps associated with, but definitely not a peer-reviewed journal. This internal evolution was combined with Annotum end of development in November 2016, that did not allow it to run on more recent WP versions with all the security vulnerabilities that this lack of updates entailed. 
