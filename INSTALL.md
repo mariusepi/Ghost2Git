@@ -81,7 +81,7 @@ cd
 
 # Create private directory for storing the configuration file and local copies of the Ghost database
 mkdir GGprivate
-chmod 0600 GGprivate
+chmod 0700 GGprivate
 
 # Edit configuration file specifying all parameters and restrict the access to it
 chmod 0600 GGprivate/GGconfig.txt
