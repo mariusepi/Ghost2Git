@@ -76,23 +76,22 @@ emailswitch="OFF"
 As the user *ghost* run the following commands:
 
 ```bash
-# Start from ghost home dir
+# Start from the user ghost home dir, or the parent dir of the Ghost blog installation
 cd
 
 # Create private directory for storing the configuration file and local copies of the Ghost database
-cd
 mkdir GGprivate
 chmod 0600 GGprivate
+
+# Edit configuration file specifying all parameters and restrict the access to it
+chmod 0600 GGprivate/GGconfig.txt
+vi GGprivate/GGconfig.txt
 
 # Clone the repository
 git clone https://github.com/mariusepi/Ghost2Git.git
 
 # Change dir into downloaded repository
 cd Ghost2Git
-
-# Edit configuration file specifying all parameters and restrict the access to it
-chmod 0600 ../GGprivate/GGconfig.txt
-vi ../GGprivate/GGconfig.txt
 
 # Copy an empty instance of the auxiliary database 
 # to the directory containing your private data
