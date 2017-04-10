@@ -1,5 +1,5 @@
 
-##Git Installation
+## Ghost2Git Installation
 
 **Please note:** These instructions are not exactly plug-and-play and may require some tinkering from your side to adapt them to your specific system. 
 
