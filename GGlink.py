@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 import sqlite3
 import codecs
 import hashlib
@@ -11,17 +14,38 @@ import sys
 from configobj import ConfigObj
 
 #----------------------------------------------------------------------
-# Configuration parameters, where are the datatase and local git repo
+# Read configuration parameters
 
-dbghost_filename = '/home/ghost/backup/ghost-backup.db'
-dbhash_filename = '/home/ghost/backup/GGlink.db'
-gitreponame = '/home/ghost/backup/[YOUR REPO NAME HERE]'
-blogurl='YOUR GHOST BLOG WEBSITE URL HERE'
-blogtitle='YOUR BLOG TITLE HERE'
-sysemail='EDITOR or ADMIN AUXILIARY EMAIL FOR NOTIFICATIONS'
+base_path = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(base_path, "../GGprivate/GGconfig.txt") 
+
+if os.path.exists(config_path):
+    cfg = ConfigObj(config_path)
+    cfg_dict = cfg.dict()
+else:
+    print "Config not found! Exiting!"
+    sys.exit(1)
+
+# SMT server paramters
+host = cfg_dict["server"]
+from_addr = cfg_dict["from_addr"]
+username = cfg_dict["username"]
+password = cfg_dict["password"]
+
+# Blog and repo paramters
+rootdir = cfg_dict["rootdir"]
+gitreponame = cfg_dict["gitreponame"]
+blogurl = cfg_dict["blogurl"]
+blogtitle = cfg_dict["blogtitle"]
+sysemail = cfg_dict["sysemail"]
+
+# Set database filenames
+dbghost_filename = "%s/GGprivate/ghost-backup.db" % (rootdir)
+dbhash_filename = "%s/GGprivate/GGlink.db" % (rootdir)
+
 #----------------------------------------------------------------------
-# Sending emails from Python through a SMTP server
-# Full credit for this function to Mouse vs Python blog
+# Function for sending emails from Python through a SMTP server
+# Full credit for this function to Mouse vs Python blog
 # http://www.blog.pythonlibrary.org/2013/06/26/python-102-how-to-send-an-email-using-smtplib-email/
 # 
 # hostname, from address, SMTP server username and password 
@@ -33,7 +57,7 @@ def send_email(subject, body_text, emails):
     Send an email
     """
     base_path = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_path, "config.txt")
+    config_path = os.path.join(base_path, "../GGprivate/GGconfig.txt")
 
     if os.path.exists(config_path):
         cfg = ConfigObj(config_path)
@@ -103,17 +127,17 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                 file.close()
                 sqlquery = "select email, name from users where id = %i" % (author_id)
                 gdbcursor.execute(sqlquery)
-		            for row in gdbcursor.fetchall():
+                for row in gdbcursor.fetchall():
                     email, name = row
                     emails = [ email, sysemail ]
                     #print emails
-		                subject = "New draft on %s" % (blogtitle)
+                    subject = "New draft on %s" % (blogtitle)
                     body_text = """
  The new draft post <<%s>> has been added on %s
  Edit it after login at %s/ghost/signin
                     """ % (title,blogtitle,blogurl)
                     send_email(subject, body_text, emails)
-		            gitmodfile = "%s.md" % (slug)
+                gitmodfile = "%s.md" % (slug)
                 print git.add(gitmodfile)
                 commit_message = "New post: %s" % (title)
                 print git.commit(m=commit_message)
@@ -171,4 +195,5 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
         hashdb.close()    
 
 ghostdb.close()
+
 

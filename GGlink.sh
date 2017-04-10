@@ -8,19 +8,18 @@
 #         ideally cloning a remote repository on a service like GitHub or GitLab
 # This script is run hourly as a cronjob for user ghost
 ##################################################################################
-### Setup ###
-blogtitle="your-blog-slug-here"
-pathtowatch="/home/ghost/$blogtitle/content/data"
-filetowatch="ghost.db" 
-backupdir="backup"
-# using the default Ghost database name here but in case modify accordingly
-gitrepo="your-git-repo-here"
-cd /home/ghost/$backupdir
+### Read configuration parapters ###
+source ../GGprivate/GGconfig.txt
 
-if [[ $(find $pathtowatch -mmin -60 -type f -name $filetowatch  2>/dev/null) ]]
+ghostdbpath=$rootdir/$blogslug"/content/data"
+
+echo $ghostdbpath/$ghostoriginaldb
+echo $rootdir/GGprivate/ghost-backup.db
+
+if [[ $(find $ghostdbpath -mmin -60 -type f -name $ghostoriginaldb  2>/dev/null) ]]
    then
-      rsync -av $pathtowatch/$filetowatch /home/ghost/$backupdir/ghost-backup.db
-      python ~/$backupdir/GGlink.py
-      cd ~/$backupdir/$gitrepo
+      rsync -av $ghostdbpath/$ghostoriginaldb $rootdir/GGprivate/ghost-backup.db
+      python $rootdir/Ghost2Git/GGlink.py
+      cd $rootdir/$gitreponame
       git push
 fi
