@@ -11,27 +11,19 @@
 
 - The following Python modules are also installed:
 
-  ​	sqlite3
+  - sqlite3
+  - codecs
+  - hashlib
+  - sh
+  - os
+  - smtplib
+  - string
+  - sys
+  - configobj
 
-  ​	codecs
+### Preliminary steps:
 
-  ​	hashlib
-
-  ​	sh
-
-  ​	os
-
-  ​	smtplib
-
-  ​	string
-
-  ​	sys
-
-  ​	configobj
-
-**Preliminary steps:**
-
-1) Git repository setup.
+**1) Git repository setup**
 
 If it does not exist, create a git repository on a service like GitLab or GitHub or similar to store all your blog's posts as markdown files. Let's say that this repository will be called MyBlogPosts. To do this log into, say, GitLab, create a new project, name it e.g. MyBlogPosts and then follow the instructions. If you do not need or want to have a remote git repository you may just create a local one:
 
@@ -42,7 +34,7 @@ cd MyBlogPosts
 git init
 ```
 
-2) Gather the necessary information needed for the configuration file. 
+**2) Gather the necessary information needed for the configuration file** 
 
 In particular regarding the SMTP server, considering that the credentials will be stored in a plaintext file, it is strongly advised that you use either a local SMTP service that does not require authentication, or set up an external SMTP service dedicated to the Ghost blog, perhaps the same one that you have already configured in Ghost's config.js file. Please *do not* use the credentials of your personal email account as exposing the password in plaintext always presents a security hazard.
 
@@ -73,9 +65,15 @@ from_addr="NOTIFICATIONS FROM ADDRESS"
 
 # A system email address to notify the administrator and/or editors
 sysemail="A SYSTEM EMAIL ADDRESS"
+
+# Disable sending email notifications by defult
+emailswitch="OFF"
+
 ```
 
-As user *ghost* run the following commands:
+## Istallation, configuration and first run
+
+As the user *ghost* run the following commands:
 
 ```bash
 # Start from ghost home dir
@@ -112,19 +110,22 @@ At the first run it will:
 
 -  populate the repository creating a markdown file for each post especially if you have many posts already archived the first execution may take some time;
 
-To avoid spamming authors and editors with notifications about old posts that are being addedd to the git repository just now, the sending of emails to users and editors is disabled in the python script by default. You can enable the email notification service uncommenting the 
+### Enable email notifications
 
+To avoid spamming authors and editors with notifications about old posts that are being addedd to the git repository just now, the sending of emails to users and editors is disabled in the python script by default. You can enable the email notification service in the configuration file setting the variable  
+
+```bash
+emailswitch="ON"
 ```
-#send_email(...)
-```
 
-lines in the python script.
+### Create cronjob
 
-If everything goes well, you may run the shell script periodically as an hourly cronjob
+If everything goes well, at this point you should be able to browse all your posts as markdown files in the repository you set-up at the beginning. Future revisions will be traced using git tools. 
+
+As a final step, you may run the shell script periodically as an hourly cronjob
 
 ```bash
 crontab -e
 ```
 
 Alternatively, and arguably more elegantly and efficiently, one could setup a filesystem event monitoring with programs like *watch* or *inotify* that triggers the execution of the script when the original Ghost database is modified. 
-

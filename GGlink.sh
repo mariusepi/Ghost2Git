@@ -13,8 +13,8 @@ source ../GGprivate/GGconfig.txt
 
 ghostdbpath=$rootdir/$blogslug"/content/data"
 
-echo $ghostdbpath/$ghostoriginaldb
-echo $rootdir/GGprivate/ghost-backup.db
+#echo $ghostdbpath/$ghostoriginaldb
+#echo $rootdir/GGprivate/ghost-backup.db
 
 if [[ $(find $ghostdbpath -mmin -60 -type f -name $ghostoriginaldb  2>/dev/null) ]]
    then

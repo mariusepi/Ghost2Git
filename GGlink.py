@@ -31,6 +31,7 @@ host = cfg_dict["server"]
 from_addr = cfg_dict["from_addr"]
 username = cfg_dict["username"]
 password = cfg_dict["password"]
+emailswitch = cfg_dict["emailswitch"]
 
 # Blog and repo paramters
 rootdir = cfg_dict["rootdir"]
@@ -42,6 +43,9 @@ sysemail = cfg_dict["sysemail"]
 # Set database filenames
 dbghost_filename = "%s/GGprivate/ghost-backup.db" % (rootdir)
 dbhash_filename = "%s/GGprivate/GGlink.db" % (rootdir)
+gitreponame = "%s/%s" % (rootdir,gitreponame)
+
+print gitreponame
 
 #----------------------------------------------------------------------
 # Function for sending emails from Python through a SMTP server
@@ -56,20 +60,20 @@ def send_email(subject, body_text, emails):
     """
     Send an email
     """
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    config_path = os.path.join(base_path, "../GGprivate/GGconfig.txt")
+#    base_path = os.path.dirname(os.path.abspath(__file__))
+#    config_path = os.path.join(base_path, "../GGprivate/GGconfig.txt")
 
-    if os.path.exists(config_path):
-        cfg = ConfigObj(config_path)
-        cfg_dict = cfg.dict()
-    else:
-        print "Config not found! Exiting!"
-        sys.exit(1)
+#    if os.path.exists(config_path):
+#        cfg = ConfigObj(config_path)
+#        cfg_dict = cfg.dict()
+#    else:
+#        print "Config not found! Exiting!"
+#        sys.exit(1)
 
-    host = cfg_dict["smtp"]["server"]
-    from_addr = cfg_dict["smtp"]["from_addr"]
-    username = cfg_dict["credentials"]["username"]
-    password = cfg_dict["credentials"]["password"]
+#    host = cfg_dict["smtp"]["server"]
+#    from_addr = cfg_dict["smtp"]["from_addr"]
+#    username = cfg_dict["credentials"]["username"]
+#    password = cfg_dict["credentials"]["password"]
 
     BODY = string.join((
             "From: %s" % from_addr,
@@ -93,6 +97,7 @@ def send_email(subject, body_text, emails):
 #----------------------------------------------------------------------
 
 git = sh.git.bake(_cwd=gitreponame)
+print git.status()
 
 with sqlite3.connect(dbghost_filename) as ghostdb:
     gdbcursor = ghostdb.cursor()
@@ -136,10 +141,10 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  The new draft post <<%s>> has been added on %s
  Edit it after login at %s/ghost/signin
                     """ % (title,blogtitle,blogurl)
-                    send_email(subject, body_text, emails)
+                    if emailswitch == "ON": send_email(subject, body_text, emails)
                 gitmodfile = "%s.md" % (slug)
                 print git.add(gitmodfile)
-                commit_message = "New post: %s" % (title)
+                commit_message = '\"New post: %s\"' % (title)
                 print git.commit(m=commit_message)
             else:
                 sqlquery = "select hid, hslug, hash, hstatus from hashes where hid = %i" % (id)
@@ -163,7 +168,7 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  The post <<%s>> has been published on %s
  Check it out at %s/%s
                                 """ % (title,blogtitle,blogurl,slug)
-                                send_email(subject, body_text, emails)                             
+                                if emailswitch == "ON": send_email(subject, body_text, emails)              
                         elif hstatus == "published" and status == "draft":
                             subject = "Published post has been reverted to draft"
                             sqlquery = "UPDATE hashes SET hstatus='%s' WHERE hid=%i;" % (status,id)
@@ -177,7 +182,7 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  The post <<%s>> has been reverted to draft on %s
  Edit it after login at %s/ghost/signin
                                 """ % (title,blogtitle,blogurl)
-                                send_email(subject, body_text, emails)        
+                                if emailswitch == "ON": send_email(subject, body_text, emails)        
                     else:
                         print "Changes detected in %s" % (title)
                         sqlquery = "UPDATE hashes SET hash='%s' WHERE hid=%i;" % (h,id)
