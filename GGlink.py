@@ -13,6 +13,14 @@ import sys
 
 from configobj import ConfigObj
 
+from email import Charset
+from email.mime.text import MIMEText
+
+#----------------------------------------------------------------------
+Charset.add_charset('utf-8', Charset.QP, Charset.QP, 'utf-8')
+#----------------------------------------------------------------------
+
+
 #----------------------------------------------------------------------
 # Read configuration parameters
 
@@ -50,44 +58,48 @@ gitreponame = "%s/%s" % (rootdir,gitreponame)
 finaldraft = "==Final Draft=="
 
 #----------------------------------------------------------------------
-# Function for sending emails from Python through a SMTP server
+# Function for sending Unicode emails from Python through a SMTP server
 # Full credit for this function to Mouse vs Python blog
 # http://www.blog.pythonlibrary.org/2013/06/26/python-102-how-to-send-an-email-using-smtplib-email/
 # 
+# and Marius Gedminas http://mg.pov.lt/blog/unicode-emails-in-python.html
+#
 # hostname, from address, SMTP server username and password 
 # have to specified on a separate file config.txt
 #----------------------------------------------------------------------
 
-def send_email(subject, body_text, emails):
+def send_email(subject, body, emails):
     """
     Send an email
     """
-#    base_path = os.path.dirname(os.path.abspath(__file__))
-#    config_path = os.path.join(base_path, "../GGprivate/GGconfig.txt")
-
-#    if os.path.exists(config_path):
-#        cfg = ConfigObj(config_path)
-#        cfg_dict = cfg.dict()
-#    else:
-#        print "Config not found! Exiting!"
-#        sys.exit(1)
-
-#    host = cfg_dict["smtp"]["server"]
-#    from_addr = cfg_dict["smtp"]["from_addr"]
-#    username = cfg_dict["credentials"]["username"]
-#    password = cfg_dict["credentials"]["password"]
-
-    BODY = string.join((
-            "From: %s" % from_addr,
-            "To: %s" % ', '.join(emails),
-            "Subject: %s" % subject ,
-            "",
-            body_text
-            ), "\r\n")
+    # We must choose the body charset manually
+    for body_charset in 'US-ASCII', 'ISO-8859-1', 'UTF-8':
+        try:
+            body.encode(body_charset)
+        except UnicodeError:
+            pass
+        else:
+            break
+    
+    #BODY = string.join((
+    #        "From: %s" % from_addr,
+    #        "To: %s" % ', '.join(emails),
+    #        "Subject: %s" % subject ,
+    #        "",
+    #        body_text
+    #        ), "\r\n")
+    
+    msg = MIMEText(body, 'plain', body_charset)
+    msg["Subject"] = subject
+    msg['From'] = from_addr
+    msg['To'] = string.join(emails)
+    
+    # print msg.as_string()
+    
     server = smtplib.SMTP(host)
     server.starttls()
     server.login(username,password)
-    server.sendmail(from_addr, emails, BODY)
+    server.sendmail(from_addr, emails, msg.as_string())
     server.quit()
 #----------------------------------------------------------------------
 # SMTP test
@@ -143,7 +155,7 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  The new draft post <<%s>> has been added on %s
  Edit it after login at %s/ghost/editor/%i
                     """ % (title,blogtitle,blogurl,id)
-                    if emailswitch == "ON": send_email(subject, body_text, emails)
+                    #if emailswitch == "ON": send_email(subject, body_text, emails)
                 gitmodfile = "%s.md" % (slug)
                 print git.add(gitmodfile)
                 commit_message = '\"New post: %s\"' % (title)
@@ -210,7 +222,7 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  %s, author of the draft post <<%s>>, has submitted it for review on %s.
  The editors can review it at %s/ghost/editor/%i
                                 """ % (name,title,blogtitle,blogurl,id)
-                                if emailswitch == "ON": send_email(subject, body_text, emails)                          
+                                #if emailswitch == "ON": send_email(subject, body_text, emails)                          
                     
         hashdb.close()    
 
