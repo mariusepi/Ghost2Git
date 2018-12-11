@@ -1,0 +1,24 @@
+###### Mail server
+server="SERVER NAME"
+from_addr="MAIN SENDING ADDRESS"
+username="USERNAME"
+password="PASSWORD"
+
+###### Original Ghost database
+ghostdbpath="MAINDIR/content/data/ghost.db"
+ghostoriginaldb="ghost.db"
+
+###### Blog paramenters
+blogurl="BLOG EXTERNAL URL"
+blogtitle="BLOG TITLE"
+sysemail="SYSTEM EMAIL TO SEND NOTIFICAITONS FROM"
+blogslug="BLOGSLUG"
+
+##### GG parameters
+#dbhash_filename="/home/USER/private/GGlink.db"
+rootdir="/home/USER"
+privatedir="GGprivate"
+GGdir="Ghost2Git"
+gitreponame="/backup/BLOG-LOCAL-GIT-REPOSITORY"
+# using the default Ghost database name here but in case modify accordingly
+emailswitch="OFF"
