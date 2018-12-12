@@ -92,6 +92,11 @@ cp Ghost2Git/GGlink.db GGprivate/
 # Change dir into downloaded repository
 cd Ghost2Git
 
+# Edit the GGlink.sh script according to your version of Ghost: use the Python script GGlink0.py for Ghost 0.x or GGlink1.py for Ghost 1.x or 2.x
+vi GGlink.sh
+
+      python $HOME/Ghost2Git/GGlink1.py
+
 # Manually execute the script for the first time
 bash GGlink.sh
 
