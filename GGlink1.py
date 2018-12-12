@@ -117,12 +117,12 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
     gdbcursor = ghostdb.cursor()
 
     gdbcursor.execute("""
-    select uuid, title, slug, author_id, plaintext, status from posts
+    select uuid, title, slug, author_id, plaintext, html, status from posts
     """)
 
     for row in gdbcursor.fetchall():
-        uuid, title, slug, author_id, plaintext, status = row
-        h = hashlib.sha1(plaintext.encode('utf-8')).hexdigest()
+        uuid, title, slug, author_id, plaintext, html, status = row
+        h = hashlib.sha1(html.encode('utf-8')).hexdigest()
         with sqlite3.connect(dbhash_filename) as hashdb:
             hdbcursor = hashdb.cursor()
             sqlquery = "select huuid, hslug, hash, htitle from hashes where huuid = '%s';" % (uuid)
@@ -140,10 +140,14 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                 sqlquery = "INSERT INTO hashes(huuid,hslug,hash,hstatus) VALUES('%s','%s','%s','draft');" % (uuid,slug,h)
                 #print sqlquery
                 hdbcursor.execute(sqlquery)
-                filename = "%s/%s.md" % (gitreponame,slug)
-                file = codecs.open(filename, "w", "utf-8")
-                file.write(plaintext)
-                file.close()
+                filenamemd = "%s/%s.md" % (gitreponame,slug)
+                filenamehtml = "%s/%s.html" % (gitreponame,slug)
+                filemd = codecs.open(filenamemd, "w", "utf-8")
+                filehtml = codecs.open(filenamehtml, "w", "utf-8")
+                filemd.write(plaintext)
+                filehtml.write(html)
+                filemd.close()
+                filehtml.close()
                 sqlquery = "select email, name from users where id = '%s';" % (author_id)
                 gdbcursor.execute(sqlquery)
                 for row in gdbcursor.fetchall():
@@ -156,8 +160,10 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
  Edit it after login at %s/ghost/editor/%s
                     """ % (title,blogtitle,blogurl,id)
                     #if emailswitch == "ON": send_email(subject, body_text, emails)
-                gitmodfile = "%s.md" % (slug)
-                print git.add(gitmodfile)
+                gitmodfilemd = "%s.md" % (slug)
+                gitmodfilehtml = "%s.html" % (slug)
+                print git.add(gitmodfilemd)
+                print git.add(gitmodfilehtml)
                 commit_message = '\"New post: %s\"' % (title)
                 print git.commit(m=commit_message)
             else:
@@ -202,12 +208,18 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
                         sqlquery = "UPDATE hashes SET hash='%s' WHERE huuid='%s';" % (h,uuid)
                         #print sqlquery
                         hdbcursor.execute(sqlquery)
-                        filename = "%s/%s.md" % (gitreponame,slug)
-                        file = codecs.open(filename, "w", "utf-8")
-                        file.write(plaintext)
-                        file.close()
-                        gitmodfile = "%s.md" % (slug)
-                        print git.add(gitmodfile)
+                        filenamemd = "%s/%s.md" % (gitreponame,slug)
+                        filenamehtml = "%s/%s.html" % (gitreponame,slug)
+                        filemd = codecs.open(filenamemd, "w", "utf-8")
+                        filehtml = codecs.open(filenamehtml, "w", "utf-8")
+                        filemd.write(plaintext)
+                        filehtml.write(html)
+                        filemd.close()
+                        filehtml.close()
+                        gitmodfilemd = "%s.md" % (slug)
+                        gitmodfilehtml = "%s.html" % (slug)
+                        print git.add(gitmodfilemd)
+                        print git.add(gitmodfilehtml)
                         commit_message = '\"Updated post: %s\"' % (title)
                         print git.commit(m=commit_message)
                         if finaldraft in plaintext:
@@ -227,5 +239,3 @@ with sqlite3.connect(dbghost_filename) as ghostdb:
         hashdb.close()
 
 ghostdb.close()
-
-
